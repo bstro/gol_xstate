@@ -1,25 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import styled from "styled-components";
+import { useRect } from "@reach/rect";
+import { useWindowSize } from "@reach/window-size";
+
+import { Board } from "./Board";
+
+const AppContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+`;
 
 function App() {
+  const { width: windowWidth, height: windowHeight } = useWindowSize();
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const containerRect = useRect(containerRef);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContainer ref={containerRef}>
+      {containerRect ? <Board containerRect={containerRect} /> : <></>}
+    </AppContainer>
   );
 }
 

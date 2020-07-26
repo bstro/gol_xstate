@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { useRect } from "@reach/rect";
-
 import { Board } from "./Board";
 
 const AppContainer = styled.div`

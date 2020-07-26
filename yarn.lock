@@ -1363,15 +1363,6 @@
     tslib "^2.0.0"
     warning "^4.0.3"
 
-"@reach/window-size@^0.10.5":
-  version "0.10.5"
-  resolved "https://registry.yarnpkg.com/@reach/window-size/-/window-size-0.10.5.tgz#04689c70fdcbca439fe448580ef73da6e389dd35"
-  integrity sha512-9L43BtCQcC4C/qq6VDURKQZPB5S+NmaNMs+k847s4ZOcpggi3iDBghdi9hZSoAbbutHqsFCRz//0/Nh+N2MITg==
-  dependencies:
-    "@reach/utils" "0.10.5"
-    prop-types "^15.7.2"
-    tslib "^2.0.0"
-
 "@react-spring/animated@9.0.0-rc.3":
   version "9.0.0-rc.3"
   resolved "https://registry.yarnpkg.com/@react-spring/animated/-/animated-9.0.0-rc.3.tgz#e792cb76aacecfc78db2be6020ac11ce96503eb5"
@@ -5352,11 +5343,6 @@ forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
   integrity sha1-mMI9qxF1ZXuMBXPozszZGw/xjIQ=
-
-fraction.js@^4.0.12:
-  version "4.0.12"
-  resolved "https://registry.yarnpkg.com/fraction.js/-/fraction.js-4.0.12.tgz#0526d47c65a5fb4854df78bc77f7bec708d7b8c3"
-  integrity sha512-8Z1K0VTG4hzYY7kA/1sj4/r1/RWLBD3xwReT/RCrUCbzPszjNQCCsy3ktkU/eaEqX3MYa4pY37a52eiBlPMlhA==
 
 fragment-cache@^0.2.1:
   version "0.2.1"

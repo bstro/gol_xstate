@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@reach/rect": "^0.10.5",
-    "@reach/window-size": "^0.10.5",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -15,7 +14,6 @@
     "@types/react-dom": "^16.9.0",
     "@types/styled-components": "^5.1.1",
     "d3": "^5.16.0",
-    "fraction.js": "^4.0.12",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",

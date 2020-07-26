@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import d3, { select, range, scaleLinear } from "d3";
-import Fraction from "fraction.js";
+import { select } from "d3";
 import { Machine } from "xstate";
-import { useDebounce } from "./hooks";
 
 enum Condition {
   Alive,
   Dead,
 }
+
+const getFill = (c: Condition) => (c === Condition.Alive ? "black" : "white");
 
 export const Board: React.FC<{ containerRect: DOMRect }> = ({
   containerRect,
@@ -16,68 +16,41 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
   const boardRef = React.useRef<SVGSVGElement>(null);
   const boardWidth = containerRect.width;
   const boardHeight = containerRect.height;
-  const columns = Math.floor((boardWidth / boardHeight) * 10);
-  const rows = Math.floor((boardWidth / boardHeight) * 10);
+  const columns = Math.floor((boardWidth / boardHeight) * 20);
+  const rows = Math.floor((boardWidth / boardHeight) * 20);
 
   const cellWidth = boardWidth / columns;
   const cellHeight = boardHeight / rows;
   const gameState = React.useMemo(() => {
     return Array(columns * rows)
       .fill(null)
-      .map(() => Condition.Dead);
+      .map(() => (Math.random() >= 0.5 ? Condition.Dead : Condition.Alive));
   }, [columns, rows]);
 
-  const exceedsTopEdge = (idx: number) => idx - columns < 0;
-  const exceedsRightEdge = (idx: number) => (idx + 1) % columns === 0;
-  const exceedsBottomEdge = (idx: number) => idx + columns > columns * rows - 1;
-  const exceedsLeftEdge = (idx: number) => (idx % columns) - 1 < 0;
-
-  const moveToBottomEdge = (idx: number) => columns * rows - columns + idx;
-  const movetoLeftEdge = (idx: number) => idx - (columns - 1);
-  const moveToRightEdge = (idx: number) => idx + (columns - 1);
-  const moveToTopEdge = (idx: number) => idx % columns;
-
-  const t = (idx: number) =>
-    exceedsTopEdge(idx) ? moveToBottomEdge(idx) : idx - columns;
-  const r = (idx: number) =>
-    exceedsRightEdge(idx) ? movetoLeftEdge(idx) : idx + 1;
-  const b = (idx: number) =>
-    exceedsBottomEdge(idx) ? moveToTopEdge(idx) : idx + columns;
-  const l = (idx: number) =>
-    exceedsLeftEdge(idx) ? moveToRightEdge(idx) : idx - 1;
+  const exceedsTop = (idx: number) => idx - columns < 0;
+  const exceedsRight = (idx: number) => (idx + 1) % columns === 0;
+  const exceedsBottom = (idx: number) => idx + columns > columns * rows - 1;
+  const exceedsLeft = (idx: number) => (idx % columns) - 1 < 0;
+  const toBottom = (idx: number) => columns * rows - columns + idx;
+  const toLeft = (idx: number) => idx - (columns - 1);
+  const toRight = (idx: number) => idx + (columns - 1);
+  const toTop = (idx: number) => idx % columns;
+  const t = (idx: number) => (exceedsTop(idx) ? toBottom(idx) : idx - columns);
+  const r = (idx: number) => (exceedsRight(idx) ? toLeft(idx) : idx + 1);
+  const b = (idx: number) => (exceedsBottom(idx) ? toTop(idx) : idx + columns);
+  const l = (idx: number) => (exceedsLeft(idx) ? toRight(idx) : idx - 1);
   const tl = (idx: number) => l(t(idx));
   const tr = (idx: number) => r(t(idx));
   const bl = (idx: number) => l(b(idx));
   const br = (idx: number) => r(b(idx));
 
-  const getFill = React.useCallback(
-    (condition: Condition, idx: number) => {
-      console.log("activeCell", activeCell);
-      if (idx === activeCell) {
-        return "white";
-      } else if (
-        activeCell != null &&
-        [t, tl, tr, l, r, b, bl, br].some((fn) => fn(activeCell) === idx)
-      ) {
-        return "green";
-      } else {
-        return condition === Condition.Alive ? "black" : "red";
-      }
-    },
-    [activeCell]
-  );
-
   const getXOffset = React.useCallback(
-    (_, i: number) => {
-      return (i % columns) * cellWidth;
-    },
+    (_, i: number) => (i % columns) * cellWidth,
     [cellWidth, columns]
   );
 
   const getYOffset = React.useCallback(
-    (_, i: number) => {
-      return Math.floor(i / rows) * cellHeight;
-    },
+    (_, i: number) => Math.floor(i / rows) * cellHeight,
     [cellHeight, rows]
   );
 
@@ -106,23 +79,7 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
               .attr("height", cellHeight)
               .attr("fill", getFill)
               .attr("x", getXOffset)
-              .attr("y", getYOffset)
-              .attr("class", (_, idx) => {
-                if (activeCell != null) {
-                  if (t(activeCell) === idx) return "ACTIVE TOP";
-                  if (r(activeCell) === idx) return "ACTIVE RIGHT";
-                  if (b(activeCell) === idx) return "ACTIVE BOTTOM";
-                  if (l(activeCell) === idx) return "ACTIVE LEFT";
-                  if (tl(activeCell) === idx) return "ACTIVE TOP-LEFT";
-                  if (tr(activeCell) === idx) return "ACTIVE TOP-RIGHT";
-                  if (br(activeCell) === idx) return "ACTIVE BOTTOM-RIGHT";
-                  if (bl(activeCell) === idx) return "ACTIVE BOTTOM-LEFT";
-                  return "";
-                } else {
-                  return "";
-                }
-              })
-              .on("click", (_, idx) => setActiveCell(idx)),
+              .attr("y", getYOffset),
           (exit) => {
             exit.remove();
           }
@@ -134,7 +91,6 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
     containerRect.height,
     containerRect.width,
     gameState,
-    getFill,
     getXOffset,
     getYOffset,
   ]);

@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { useRect } from "@reach/rect";
-import { useWindowSize } from "@reach/window-size";
 
 import { Board } from "./Board";
 
@@ -15,7 +14,6 @@ const AppContainer = styled.div`
 `;
 
 function App() {
-  const { width: windowWidth, height: windowHeight } = useWindowSize();
   const containerRef = React.useRef<HTMLDivElement>(null);
   const containerRect = useRect(containerRef);
 

@@ -27,14 +27,22 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
       .map(() => Condition.Dead);
   }, [columns, rows]);
 
-  const t = (idx: number) => idx - columns;
-  const tl = (idx: number) => t(idx) - 1;
-  const tr = (idx: number) => t(idx) + 1;
+  const exceedsBottomRow = (idx: number) => idx > columns * rows - 1;
+
+  const t = (idx: number) =>
+    idx - columns < 0 ? columns * rows - columns + idx : idx - columns;
   const l = (idx: number) => idx - 1;
+  const b = (idx: number) =>
+    idx + columns > columns * rows - 1 ? idx % columns : idx + columns;
   const r = (idx: number) => idx + 1;
-  const b = (idx: number) => idx + columns;
-  const bl = (idx: number) => b(idx) - 1;
-  const br = (idx: number) => b(idx) + 1;
+  const tl = (idx: number) => l(t(idx));
+  const tr = (idx: number) => r(t(idx));
+  const bl = (idx: number) => l(b(idx));
+  const br = (idx: number) => r(b(idx));
+
+  if (activeCell != null) {
+    debugger;
+  }
 
   const getFill = React.useCallback(
     (condition: Condition, idx: number) => {

@@ -27,22 +27,28 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
       .map(() => Condition.Dead);
   }, [columns, rows]);
 
-  const exceedsBottomRow = (idx: number) => idx > columns * rows - 1;
+  const exceedsTopEdge = (idx: number) => idx - columns < 0;
+  const exceedsRightEdge = (idx: number) => (idx + 1) % columns === 0;
+  const exceedsBottomEdge = (idx: number) => idx + columns > columns * rows - 1;
+  const exceedsLeftEdge = (idx: number) => (idx % columns) - 1 < 0;
+
+  const moveToBottomEdge = (idx: number) => columns * rows - columns + idx;
+  const movetoLeftEdge = (idx: number) => idx - (columns - 1);
+  const moveToRightEdge = (idx: number) => idx + (columns - 1);
+  const moveToTopEdge = (idx: number) => idx % columns;
 
   const t = (idx: number) =>
-    idx - columns < 0 ? columns * rows - columns + idx : idx - columns;
-  const l = (idx: number) => idx - 1;
+    exceedsTopEdge(idx) ? moveToBottomEdge(idx) : idx - columns;
+  const r = (idx: number) =>
+    exceedsRightEdge(idx) ? movetoLeftEdge(idx) : idx + 1;
   const b = (idx: number) =>
-    idx + columns > columns * rows - 1 ? idx % columns : idx + columns;
-  const r = (idx: number) => idx + 1;
+    exceedsBottomEdge(idx) ? moveToTopEdge(idx) : idx + columns;
+  const l = (idx: number) =>
+    exceedsLeftEdge(idx) ? moveToRightEdge(idx) : idx - 1;
   const tl = (idx: number) => l(t(idx));
   const tr = (idx: number) => r(t(idx));
   const bl = (idx: number) => l(b(idx));
   const br = (idx: number) => r(b(idx));
-
-  if (activeCell != null) {
-    debugger;
-  }
 
   const getFill = React.useCallback(
     (condition: Condition, idx: number) => {
@@ -101,6 +107,21 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
               .attr("fill", getFill)
               .attr("x", getXOffset)
               .attr("y", getYOffset)
+              .attr("class", (_, idx) => {
+                if (activeCell != null) {
+                  if (t(activeCell) === idx) return "ACTIVE TOP";
+                  if (r(activeCell) === idx) return "ACTIVE RIGHT";
+                  if (b(activeCell) === idx) return "ACTIVE BOTTOM";
+                  if (l(activeCell) === idx) return "ACTIVE LEFT";
+                  if (tl(activeCell) === idx) return "ACTIVE TOP-LEFT";
+                  if (tr(activeCell) === idx) return "ACTIVE TOP-RIGHT";
+                  if (br(activeCell) === idx) return "ACTIVE BOTTOM-RIGHT";
+                  if (bl(activeCell) === idx) return "ACTIVE BOTTOM-LEFT";
+                  return "";
+                } else {
+                  return "";
+                }
+              })
               .on("click", (_, idx) => setActiveCell(idx)),
           (exit) => {
             exit.remove();

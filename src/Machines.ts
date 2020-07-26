@@ -5,7 +5,26 @@ export enum Condition {
   DEAD = "DEAD",
 }
 
-export const cellMachine = Machine<{ neighbors: number }>({
+export enum Event {
+  TICK = "TICK",
+}
+
+interface CellContext {
+  neighbors: number;
+}
+
+type CellStateSchema = {
+  states: {
+    [Condition.ALIVE]: {};
+    [Condition.DEAD]: {};
+  };
+};
+
+export const cellMachine = Machine<
+  CellContext,
+  CellStateSchema,
+  { type: Event.TICK }
+>({
   id: "toggle",
   initial: Condition.DEAD,
   context: { neighbors: 0 },

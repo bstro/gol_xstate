@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { select } from "d3";
 // import { useMachine } from "@xstate/react";
-import { cellMachine, Condition } from "./Machines";
+import { cellMachine, Condition, Event as CellEvent } from "./Machines";
 import { useDebounce } from "./hooks";
 
 const getFill = (c: Condition) => (c === Condition.ALIVE ? "black" : "white");
@@ -108,8 +108,15 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
             .map((idx) => gameState[idx])
             .filter((cell) => cell === Condition.ALIVE).length;
 
-          return cellMachine.transition(cell, "TICK", { neighbors })
-            .value as Condition;
+          const next = cellMachine.transition(cell, CellEvent.TICK, {
+            neighbors,
+          }).value;
+
+          if (next === Condition.ALIVE) {
+            return Condition.ALIVE;
+          } else {
+            return Condition.DEAD;
+          }
         })
       );
     });

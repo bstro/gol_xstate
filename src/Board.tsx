@@ -148,7 +148,7 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
 
   return (
     <div style={{ backgroundColor: deadColor }}>
-      <svg ref={boardRef} />
+      <svg ref={boardRef} style={{ transform: "scale(0.933)" }} />
     </div>
   );
 };

@@ -1,10 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { select } from "d3";
-// import { useMachine } from "@xstate/react";
+import chroma from "chroma-js";
 import { cellMachine, Condition, Event as CellEvent } from "./Machines";
-import { useDebounce } from "./hooks";
-
-const getFill = (c: Condition) => (c === Condition.ALIVE ? "black" : "white");
 
 function getNeighborPositions(columns: number, rows: number, idx: number) {
   const exceedsTop = (i: number) => i - columns < 0;
@@ -38,18 +35,33 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
   const boardRef = React.useRef<SVGSVGElement>(null);
   const boardWidth = containerRect.width;
   const boardHeight = containerRect.height;
-  const columns = useDebounce(Math.floor((boardWidth / boardHeight) * 20), 100);
-  const rows = useDebounce(Math.floor((boardWidth / boardHeight) * 20), 100);
+  const columns = Math.floor((boardWidth / boardHeight) * 20);
+  const rows = Math.floor((boardWidth / boardHeight) * 20);
   const cellWidth = boardWidth / columns;
   const cellHeight = boardHeight / rows;
 
-  const [gameState, setGameState] = React.useState(() =>
+  const [deadColor, setDeadColor] = React.useState(chroma.random().hex());
+  const [aliveColor, setAliveColor] = React.useState(chroma.random().hex());
+  const [gameState, setGameState] = React.useState(
     initializeGameState(columns, rows)
   );
+
+  const resetBoard = React.useCallback(() => {
+    setDeadColor(chroma.random().hex());
+    setAliveColor(chroma.random().hex());
+    setGameState(initializeGameState(columns, rows));
+  }, [rows, columns, setDeadColor, setAliveColor]);
 
   React.useEffect(() => {
     setGameState(initializeGameState(columns, rows));
   }, [columns, rows]);
+
+  const getFill = React.useCallback(
+    (c: Condition) => {
+      return c === Condition.ALIVE ? aliveColor : deadColor;
+    },
+    [deadColor, aliveColor]
+  );
 
   const getXOffset = React.useCallback(
     (_, i: number) => (i % columns) * cellWidth,
@@ -77,8 +89,10 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
               .attr("width", cellWidth)
               .attr("height", cellHeight)
               .attr("fill", getFill)
+              .attr("cx", "100%")
               .attr("x", getXOffset)
-              .attr("y", getYOffset),
+              .attr("y", getYOffset)
+              .on("click", resetBoard),
           (update) =>
             update
               .attr("width", cellWidth)
@@ -97,6 +111,8 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
     gameState,
     getXOffset,
     getYOffset,
+    getFill,
+    resetBoard,
   ]);
 
   React.useEffect(() => {

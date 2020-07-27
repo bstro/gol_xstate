@@ -88,7 +88,9 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
               .attr("width", cellWidth)
               .attr("height", cellHeight)
               .attr("fill", getFill)
-              .attr("cx", "100%")
+              .attr("stroke", deadColor)
+              .attr("stroke-width", "3")
+              .attr("rx", "2px")
               .attr("x", getXOffset)
               .attr("y", getYOffset)
               .on("click", resetBoard),
@@ -97,6 +99,9 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
               .attr("width", cellWidth)
               .attr("height", cellHeight)
               .attr("fill", getFill)
+              .attr("stroke", deadColor)
+              .attr("stroke-width", "2")
+              .attr("rx", "2px")
               .attr("x", getXOffset)
               .attr("y", getYOffset),
           (exit) => exit.remove()
@@ -112,6 +117,7 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
     getYOffset,
     getFill,
     resetBoard,
+    deadColor,
   ]);
 
   React.useEffect(() => {

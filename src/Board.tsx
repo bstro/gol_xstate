@@ -35,8 +35,8 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
   const boardRef = React.useRef<SVGSVGElement>(null);
   const boardWidth = containerRect.width;
   const boardHeight = containerRect.height;
-  const columns = Math.floor((boardWidth / boardHeight) * 20);
-  const rows = Math.floor((boardWidth / boardHeight) * 20);
+  const columns = Math.floor((boardWidth / boardHeight) * 15);
+  const rows = Math.floor((boardWidth / boardHeight) * 15);
   const cellWidth = boardWidth / columns;
   const cellHeight = boardHeight / rows;
 
@@ -73,12 +73,11 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
     [cellHeight, rows]
   );
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (boardRef.current) {
       const board = select(boardRef.current)
         .attr("width", containerRect.width)
         .attr("height", containerRect.height);
-
       board
         .selectAll("rect")
         .data(gameState)
@@ -141,5 +140,9 @@ export const Board: React.FC<{ containerRect: DOMRect }> = ({
     };
   });
 
-  return <svg ref={boardRef} />;
+  return (
+    <div style={{ backgroundColor: deadColor }}>
+      <svg ref={boardRef} />
+    </div>
+  );
 };
